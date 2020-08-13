@@ -30,6 +30,7 @@ function Home() {
         </section>
         <PosterSection tabs={POPULAR_SECTION_TABS} sectionTitle="What's Popular" />
         <PosterSection tabs={TRENDING_SECTION_TABS} sectionTitle="Trending" showBackgroundImage />
+        <PosterSection tabs={TOP_RATED_SECTION_TABS} sectionTitle="Top Rated" />
       </div>
       <Footer />
     </div>
@@ -166,25 +167,6 @@ function PosterSection({ tabs, sectionTitle, showBackgroundImage = false }) {
   );
 }
 
-const POPULAR_SECTION_TABS = [
-  {
-    title: 'On Tv',
-    value: 'tv',
-    async getData() {
-      const res = await TvService.getPopularTvShows();
-      return res.results;
-    },
-  },
-  {
-    title: 'In Theaters',
-    value: 'movie',
-    async getData() {
-      const res = await MovieService.getPopularMovies();
-      return res.results;
-    },
-  },
-];
-
 const popularSectionCss = css`
   margin: 30px 0 0;
   min-height: 400px;
@@ -209,6 +191,25 @@ const popularSectionCss = css`
   }
 `;
 
+const POPULAR_SECTION_TABS = [
+  {
+    title: 'On Tv',
+    value: 'tv',
+    async getData() {
+      const res = await TvService.getPopularTvShows();
+      return res.results;
+    },
+  },
+  {
+    title: 'In Theaters',
+    value: 'movie',
+    async getData() {
+      const res = await MovieService.getPopularMovies();
+      return res.results;
+    },
+  },
+];
+
 const TRENDING_SECTION_TABS = [
   {
     value: 'day',
@@ -230,6 +231,25 @@ const TRENDING_SECTION_TABS = [
         TvService.getTrendingTvShows(this.value),
       ]);
       return [...trendingMovies.results, ...trendingTvShows.results];
+    },
+  },
+];
+
+const TOP_RATED_SECTION_TABS = [
+  {
+    title: 'TV Shows',
+    value: 'tv',
+    async getData() {
+      const res = await TvService.getTopRatedTvShows();
+      return res.results;
+    },
+  },
+  {
+    title: 'Movies',
+    value: 'movie',
+    async getData() {
+      const res = await MovieService.getTopRatedMovies();
+      return res.results;
     },
   },
 ];

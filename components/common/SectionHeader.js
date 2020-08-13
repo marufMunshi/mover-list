@@ -50,6 +50,7 @@ const sectionHeaderCss = css`
     font-weight: 600;
     color: ${colors.darkBlue};
     margin-right: 20px;
+    margin-bottom: 0;
   }
   .btn {
     padding: 0;

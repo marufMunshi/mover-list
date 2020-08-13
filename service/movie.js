@@ -12,4 +12,8 @@ function getTrendingMovies(timeWindow) {
   return ax.get(`/trending/movie/${timeWindow}`);
 }
 
-export default { getMovieById, getPopularMovies, getTrendingMovies };
+function getTopRatedMovies() {
+  return ax.get('/movie/top_rated');
+}
+
+export default { getMovieById, getPopularMovies, getTrendingMovies, getTopRatedMovies };

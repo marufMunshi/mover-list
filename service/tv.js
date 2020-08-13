@@ -8,4 +8,8 @@ function getTrendingTvShows(timeWindow) {
   return ax.get(`/trending/tv/${timeWindow}`);
 }
 
-export default { getPopularTvShows, getTrendingTvShows };
+function getTopRatedTvShows() {
+  return ax.get('/tv/top_rated');
+}
+
+export default { getPopularTvShows, getTrendingTvShows, getTopRatedTvShows };

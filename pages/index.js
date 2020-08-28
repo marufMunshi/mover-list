@@ -2,20 +2,19 @@
 import { css, jsx } from '@emotion/core';
 import MovieService from '../service/movie';
 import TvService from '../service/tv';
+import ConfigurationService from '../service/configuration';
 import { Navbar } from '../components/common/Navbar';
 import { Footer } from '../components/common/Footer';
 import { containerCss } from '../config/styles/commonStyle';
-import { useState, useEffect, Fragment, useCallback } from 'react';
+import { useState, Fragment } from 'react';
 import { PosterCard } from '../components/common/PosterCard';
-import { Loader } from '../components/common/Loader';
 import { imageURLBuilder } from '../lib/imageURLBuilder';
 import { dateFormatter } from '../lib/dateFormatter';
 import { mq } from '../lib/facepaint';
 import { SectionHeader } from '../components/common/SectionHeader';
 import classnames from 'classnames';
-import { useGetAPIConfiguration } from '../hooks/useGetAPIConfiguration';
 
-function Home() {
+function Home(props) {
   return (
     <div>
       <Navbar />
@@ -28,9 +27,28 @@ function Home() {
             </h3>
           </div>
         </section>
-        <PosterSection tabs={POPULAR_SECTION_TABS} sectionTitle="What's Popular" />
-        <PosterSection tabs={TRENDING_SECTION_TABS} sectionTitle="Trending" showBackgroundImage />
-        <PosterSection tabs={TOP_RATED_SECTION_TABS} sectionTitle="Top Rated" />
+        <PosterSection
+          config={props.config}
+          tabs={POPULAR_SECTION_TABS}
+          firstTabData={props.popularTv}
+          secondTabData={props.popularMovie}
+          sectionTitle="What's Popular"
+        />
+        <PosterSection
+          config={props.config}
+          tabs={TRENDING_SECTION_TABS}
+          firstTabData={props.todaysTreding}
+          secondTabData={props.weeksTrending}
+          sectionTitle="Trending"
+          showBackgroundImage
+        />
+        <PosterSection
+          config={props.config}
+          tabs={TOP_RATED_SECTION_TABS}
+          firstTabData={props.topRatedTv}
+          secondTabData={props.topRatedMovie}
+          sectionTitle="Top Rated"
+        />
       </div>
       <Footer />
     </div>
@@ -73,43 +91,17 @@ const homeCss = css`
   }
 `;
 
-function PosterSection({ tabs, sectionTitle, showBackgroundImage = false }) {
+function PosterSection({
+  tabs,
+  sectionTitle,
+  showBackgroundImage = false,
+  config,
+  firstTabData = [],
+  secondTabData = [],
+}) {
   const [firstTab, secondTab] = tabs;
 
   const [activeTab, setActiveTab] = useState(firstTab.value);
-  const [fetching, setFetching] = useState(true);
-  const [firstTabData, setFirstTabData] = useState([]);
-  const [secondTabData, setSecondTabData] = useState([]);
-
-  const config = useGetAPIConfiguration();
-
-  const fetchFirstTabData = useCallback(async () => {
-    if (firstTabData.length > 0) {
-      return;
-    }
-    setFetching(true);
-    const res = await firstTab.getData();
-    setFirstTabData(res);
-    setFetching(false);
-  }, [firstTabData.length, firstTab]);
-
-  const fetchSecondTabData = useCallback(async () => {
-    if (secondTabData.length > 0) {
-      return;
-    }
-    setFetching(true);
-    const res = await secondTab.getData();
-    setSecondTabData(res);
-    setFetching(false);
-  }, [secondTabData.length, secondTab]);
-
-  useEffect(() => {
-    if (activeTab === firstTab.value) {
-      fetchFirstTabData();
-    } else {
-      fetchSecondTabData();
-    }
-  }, [activeTab, firstTab.value, fetchFirstTabData, fetchSecondTabData]);
 
   const backgroundImageImageClass = classnames({
     'trending-bg-image': showBackgroundImage,
@@ -126,41 +118,38 @@ function PosterSection({ tabs, sectionTitle, showBackgroundImage = false }) {
           buttons={tabs}
         />
         <main>
-          {fetching && <Loader />}
-          {fetching === false && (
-            <Fragment>
-              {activeTab === firstTab.value &&
-                firstTabData.map((d) => (
-                  <PosterCard
-                    classNames="card-spacing"
-                    key={d.id}
-                    imageURL={imageURLBuilder(
-                      config.images.secure_base_url,
-                      config.images.poster_sizes[3],
-                      d.poster_path,
-                    )}
-                    rating={d.vote_average}
-                    title={d.title || d.name}
-                    subTitle={dateFormatter(d.release_date || d.first_air_date)}
-                  />
-                ))}
-              {activeTab === secondTab.value &&
-                secondTabData.map((d) => (
-                  <PosterCard
-                    classNames="card-spacing"
-                    key={d.id}
-                    imageURL={imageURLBuilder(
-                      config.images.secure_base_url,
-                      config.images.poster_sizes[3],
-                      d.poster_path,
-                    )}
-                    rating={d.vote_average}
-                    title={d.title || d.name}
-                    subTitle={dateFormatter(d.release_date || d.first_air_date)}
-                  />
-                ))}
-            </Fragment>
-          )}
+          <Fragment>
+            {activeTab === firstTab.value &&
+              firstTabData.map((d) => (
+                <PosterCard
+                  classNames="card-spacing"
+                  key={d.id}
+                  imageURL={imageURLBuilder(
+                    config.images.secure_base_url,
+                    config.images.poster_sizes[3],
+                    d.poster_path,
+                  )}
+                  rating={d.vote_average}
+                  title={d.title || d.name}
+                  subTitle={dateFormatter(d.release_date || d.first_air_date)}
+                />
+              ))}
+            {activeTab === secondTab.value &&
+              secondTabData.map((d) => (
+                <PosterCard
+                  classNames="card-spacing"
+                  key={d.id}
+                  imageURL={imageURLBuilder(
+                    config.images.secure_base_url,
+                    config.images.poster_sizes[3],
+                    d.poster_path,
+                  )}
+                  rating={d.vote_average}
+                  title={d.title || d.name}
+                  subTitle={dateFormatter(d.release_date || d.first_air_date)}
+                />
+              ))}
+          </Fragment>
         </main>
       </div>
     </section>
@@ -253,5 +242,40 @@ const TOP_RATED_SECTION_TABS = [
     },
   },
 ];
+
+export async function getServerSideProps(context) {
+  const [
+    config,
+    popularTv,
+    popularMovie,
+    trendingMovieToday,
+    trendingTvToday,
+    trendingMovieWeek,
+    trendingTvWeek,
+    topRatedTv,
+    topRatedMovie,
+  ] = await Promise.all([
+    ConfigurationService.getConfiguration(),
+    TvService.getPopularTvShows(),
+    MovieService.getPopularMovies(),
+    MovieService.getTrendingMovies('day'),
+    TvService.getTrendingTvShows('day'),
+    MovieService.getTrendingMovies('week'),
+    TvService.getTrendingTvShows('week'),
+    TvService.getTopRatedTvShows(),
+    MovieService.getTopRatedMovies(),
+  ]);
+  return {
+    props: {
+      config,
+      popularTv: popularTv.results,
+      popularMovie: popularMovie.results,
+      todaysTreding: [...trendingMovieToday.results, ...trendingTvToday.results],
+      weeksTrending: [...trendingMovieWeek.results, ...trendingTvWeek.results],
+      topRatedTv: topRatedTv.results,
+      topRatedMovie: topRatedMovie.results,
+    },
+  };
+}
 
 export default Home;

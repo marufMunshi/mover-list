@@ -17,5 +17,6 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     'no-console': 'error',
     'react/prop-types': 'off',
+    camelcase: 'off',
   },
 };

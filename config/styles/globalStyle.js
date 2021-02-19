@@ -137,5 +137,6 @@ export const globalStyles = css`
     font-family: 'Source Sans Pro', sans-serif;
     color: #333;
     font-weight: 400;
+    font-size: 16px;
   }
 `;

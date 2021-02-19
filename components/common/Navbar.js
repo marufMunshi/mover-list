@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core';
 import { colors, containerCss } from '../../config/styles/commonStyle';
-import { DropdownMenu } from './Dropdown/Dropdown';
+// import { DropdownMenu } from './Dropdown/Dropdown';
 import {
   VideoCameraOutlined,
   DesktopOutlined,
@@ -13,6 +13,8 @@ import debounce from 'lodash.debounce';
 import { useState } from 'react';
 import SearchService from '../../service/search';
 import { Logo } from './Logo';
+import Router from 'next/router';
+
 const { Option } = Select;
 
 export function Navbar() {
@@ -20,10 +22,13 @@ export function Navbar() {
     <header css={navbarCss}>
       <nav>
         <div className="left-side">
-          <Logo />
-          {dropdownMenus.map((dm, index) => (
+          <a href="/">
+            <Logo />
+          </a>
+          {/* // TODO: un-comment when pages are built */}
+          {/* {dropdownMenus.map((dm, index) => (
             <DropdownMenu key={index} linkClassName="dropdown-link" {...dm} />
-          ))}
+          ))} */}
         </div>
         <div className="right-side">
           <RemoteSelect />
@@ -108,6 +113,11 @@ function RemoteSelect() {
 
   const _debouncedSearch = debounce(search, 300);
 
+  const searchResultSelect = (value) => {
+    const _item = data.find((d) => d.value === value);
+    Router.push(`/${_item.mediaType}/${_item.value}-${_item.text}`);
+  };
+
   return (
     <Select
       showSearch={true}
@@ -115,6 +125,7 @@ function RemoteSelect() {
       notFoundContent={fetching ? <Spin size="small" /> : null}
       filterOption={false}
       onSearch={(val) => _debouncedSearch(val)}
+      onChange={searchResultSelect}
       optionLabelProp="label"
       style={{ width: '100%' }}>
       {data.map((d) => (
@@ -133,34 +144,36 @@ function RemoteSelect() {
   );
 }
 
-const dropdownMenus = [
-  {
-    name: 'Movies',
-    items: [
-      {
-        title: 'Popular',
-        href: '/movies',
-      },
-      {
-        title: 'Now Playing',
-        href: '/movies/now-playing',
-      },
-      {
-        title: 'Upcoming',
-        href: '/movies/upcoming',
-      },
-    ],
-  },
-  {
-    name: 'TV Shows',
-    items: [
-      {
-        title: 'Popular',
-        href: '/tv',
-      },
-    ],
-  },
-];
+// TODO: un-comment when pages are built
+
+// const dropdownMenus = [
+//   {
+//     name: 'Movies',
+//     items: [
+//       {
+//         title: 'Popular',
+//         href: '/movies',
+//       },
+//       {
+//         title: 'Now Playing',
+//         href: '/movies/now-playing',
+//       },
+//       {
+//         title: 'Upcoming',
+//         href: '/movies/upcoming',
+//       },
+//     ],
+//   },
+//   {
+//     name: 'TV Shows',
+//     items: [
+//       {
+//         title: 'Popular',
+//         href: '/tv',
+//       },
+//     ],
+//   },
+// ];
 
 const MEDIA_TYPES = {
   tv: 'tv',

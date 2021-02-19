@@ -3,8 +3,6 @@ import { css, jsx } from '@emotion/core';
 import MovieService from '../service/movie';
 import TvService from '../service/tv';
 import ConfigurationService from '../service/configuration';
-import { Navbar } from '../components/common/Navbar';
-import { Footer } from '../components/common/Footer';
 import { containerCss } from '../config/styles/commonStyle';
 import { useState, Fragment } from 'react';
 import { PosterCard } from '../components/common/PosterCard';
@@ -13,11 +11,11 @@ import { dateFormatter } from '../lib/dateFormatter';
 import { mq } from '../lib/facepaint';
 import { SectionHeader } from '../components/common/SectionHeader';
 import classnames from 'classnames';
+import PageLayout from '../components/common/PageLayout';
 
 function Home(props) {
   return (
-    <div>
-      <Navbar />
+    <PageLayout>
       <div css={homeCss}>
         <section className="hero-container">
           <div className="hero-box">
@@ -50,8 +48,7 @@ function Home(props) {
           sectionTitle="Top Rated"
         />
       </div>
-      <Footer />
-    </div>
+    </PageLayout>
   );
 }
 
@@ -132,6 +129,11 @@ function PosterSection({
                   rating={d.vote_average}
                   title={d.title || d.name}
                   subTitle={dateFormatter(d.release_date || d.first_air_date)}
+                  detailsPageRoute={
+                    firstTab.mediaType
+                      ? `/${firstTab.mediaType}/${d.id}-${d.title || d.name}`
+                      : `/${d.media_type}/${d.id}-${d.title || d.name}`
+                  }
                 />
               ))}
             {activeTab === secondTab.value &&
@@ -147,6 +149,11 @@ function PosterSection({
                   rating={d.vote_average}
                   title={d.title || d.name}
                   subTitle={dateFormatter(d.release_date || d.first_air_date)}
+                  detailsPageRoute={
+                    secondTab.mediaType
+                      ? `/${secondTab.mediaType}/${d.id}-${d.title || d.name}`
+                      : `/${d.media_type}/${d.id}-${d.title || d.name}`
+                  }
                 />
               ))}
           </Fragment>
@@ -168,10 +175,9 @@ const popularSectionCss = css`
   main {
     display: flex;
     margin: 20px 0;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow-x: scroll;
     ${mq({
-      maxWidth: ['95%', '95%', '950px', '1150px', '1350px'],
+      width: ['95%', '95%', '950px', '1150px', '1350px'],
     })}
   }
   .card-spacing {
@@ -184,6 +190,7 @@ const POPULAR_SECTION_TABS = [
   {
     title: 'On Tv',
     value: 'tv',
+    mediaType: 'tv',
     async getData() {
       const res = await TvService.getPopularTvShows();
       return res.results;
@@ -192,6 +199,7 @@ const POPULAR_SECTION_TABS = [
   {
     title: 'In Theaters',
     value: 'movie',
+    mediaType: 'movie',
     async getData() {
       const res = await MovieService.getPopularMovies();
       return res.results;
@@ -228,6 +236,7 @@ const TOP_RATED_SECTION_TABS = [
   {
     title: 'TV Shows',
     value: 'tv',
+    mediaType: 'tv',
     async getData() {
       const res = await TvService.getTopRatedTvShows();
       return res.results;
@@ -236,6 +245,7 @@ const TOP_RATED_SECTION_TABS = [
   {
     title: 'Movies',
     value: 'movie',
+    mediaType: 'movie',
     async getData() {
       const res = await MovieService.getTopRatedMovies();
       return res.results;

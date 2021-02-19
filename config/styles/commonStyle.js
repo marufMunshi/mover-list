@@ -6,6 +6,8 @@ export const colors = {
   olive: '#d2d531',
   darkBlue: '#032541',
   red: '#CF000F',
+  green: '#21d07a',
+  blue: '#19B5FE',
 };
 
 export const containerCss = css`

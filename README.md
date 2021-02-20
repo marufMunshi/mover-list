@@ -52,10 +52,6 @@ Follow this [bolg post](https://www.netlify.com/blog/2020/11/30/how-to-deploy-ne
 - [Emotion](https://emotion.sh/docs/introduction) - For styling (CSS in JS)
 - [TMDB API](https://developers.themoviedb.org/3/getting-started) - For the data
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
 ## Authors
 
 - **Maruf Hasan** (https://github.com/marufMunshi)

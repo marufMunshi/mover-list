@@ -42,7 +42,7 @@ yarn run next dev -p PORT_NUMBER
 
 ## Deployment
 
-This project is built with [Netlify](https://www.netlify.com/). It is server side rendered.
+This project is deployed with [Netlify](https://www.netlify.com/). It is server side rendered.
 Follow this [bolg post](https://www.netlify.com/blog/2020/11/30/how-to-deploy-next.js-sites-to-netlify/) for how to deploy Next.js project to netlify.
 
 ## Built With

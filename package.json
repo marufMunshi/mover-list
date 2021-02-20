@@ -28,6 +28,7 @@
     "react-player": "^2.8.2"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^2.0.1",
     "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-standard": "^14.1.1",
